@@ -21,9 +21,17 @@ namespace CarsApp.Controllers
         }
 
         // GET: Cars
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Car.ToListAsync());
+            var cars = from m in _context.Car
+                         select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                cars = cars.Where(s => s.Name!.Contains(searchString));
+            }
+
+            return View(await cars.ToListAsync());
         }
 
         // GET: Cars/Details/5
