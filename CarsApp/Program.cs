@@ -1,9 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using CarsApp.Data;
+using CarsApp.Models;
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<CarsAppContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CarsAppContext")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
